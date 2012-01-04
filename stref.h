@@ -87,7 +87,7 @@ namespace tools {
 
         chT operator[] (int index) const { return _at(index); }
 
-        chT at(int index) {
+        chT at(int index) const {
             if (index < 0 || index >= length())
                 throw bad_stref_op("at(): invalid index");
             return _at[index];
@@ -174,22 +174,22 @@ namespace tools {
             return icompare(rhs) != 0;
         }
 
-        bool iless_than(const bstref& rhs) {
+        bool iless_than(const bstref& rhs) const {
             if (ref == rhs.ref && len < rhs.len) return true;   // same string, shorter
             return icompare(rhs) < 0;
         }
 
-        bool iless_than_eq(const bstref& rhs) {
+        bool iless_than_eq(const bstref& rhs) const {
             if (ref == rhs.ref && len <= rhs.len) return true;  // same string, equal length or shorter
             return icompare(rhs) <= 0;
         }
 
-        bool igreater_than(const bstref& rhs) {
+        bool igreater_than(const bstref& rhs) const {
             if (ref == rhs.ref && rhs.len > len) return true;   // same string, longer
             return icompare(rhs) > 0;
         }
 
-        bool igreater_than_eq(const bstref& rhs) {
+        bool igreater_than_eq(const bstref& rhs) const {
             if (ref == rhs.ref && rhs.len >= len) return true;  // same string, equal length or longer
             return icompare(rhs) >= 0;
         }
@@ -355,7 +355,7 @@ namespace tools {
 
         struct chmatch {
             chmatch(chT ch) : ch(ch) {}
-            bool operator() (chT c) { return c == ch; }
+            bool operator() (chT c) const { return c == ch; }
             chT ch;
         };
 
@@ -391,7 +391,7 @@ namespace tools {
     public:
         is_any_of(basic_stref<_traits<chT>> sr) : sr(sr) {}
 
-        bool operator() (chT ch) {
+        bool operator() (chT ch) const {
             return std::find(sr.begin(), sr.end(), ch) != sr.end();
         }
 
