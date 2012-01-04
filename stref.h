@@ -65,24 +65,6 @@ namespace tools {
         static bool is_whitespace(wchar_t ch) { return !!std::iswspace(ch); }
     };
 
-    // is_any_of(chT) functor
-    template <typename chT>
-    class is_any_of
-    {
-    public:
-        is_any_of(const chT* str) : str(str) {}
-
-        bool operator() (chT ch) {
-            for (const chT *s = str; *s; ++s)
-                if (*s == ch)
-                    return true;
-            return false;
-        }
-
-    private:
-        const chT* str;
-    };
-
     // basic string reference
     template <typename TT>
     class basic_stref
@@ -247,10 +229,9 @@ namespace tools {
             return false;
         }
 
-        bool has_any_of(bstref charset) const {
-            const chT* end = charset.data() + charset.length();
+        bool has_any_of(const bstref& charset) const {
             for (size_t i = 0; i < len; ++i)
-                if (std::find(charset.data(), end, _at(i)) != end)
+                if (std::find(charset.begin(), charset.end(), _at(i)) != charset.end())
                     return true;
             return false;
         }
@@ -357,6 +338,10 @@ namespace tools {
         // readonly access to internal members
         const chT* data() const { return ref; }
         size_t length() const { return len; }
+        
+        // useful for STL algorithms
+        const chT* begin() const { return ref; }
+        const chT* end() const { return ref + len; }
 
     private:
         // unchecked access to individual characters
@@ -395,6 +380,24 @@ namespace tools {
             os << s[i];
         return os;
     }
+    
+    // is_any_of(chT) functor
+    template <typename chT>
+    class is_any_of
+    {
+    private:
+        template <typename T> struct _traits { typedef T char_type; };
+            
+    public:
+        is_any_of(basic_stref<_traits<chT>> sr) : sr(sr) {}
+
+        bool operator() (chT ch) {
+            return std::find(sr.begin(), sr.end(), ch) != sr.end();
+        }
+
+    private:
+        basic_stref<_traits<chT>> sr;
+    };
 
 }
 
