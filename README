@@ -1,0 +1,95 @@
+What is stref?
+--------------
+stref is a simple, lightweight string reference class.
+
+What is a string reference class?
+---------------------------------
+A string reference class looks and works like most string classes except that it does not actually store the content of a string. Instead, it relies on an external source for the actual string content. i.e. a std::string, char * or char[].
+
+Why is this useful?
+-------------------
+Since it has no storage of its own to maintain, a string reference class can be extremely space and time efficient.
+
+What's the catch?
+-----------------
+A string reference is only valid while the string content that it refers to is valid. If the content is no longer valid (out of scope or deallocated) while the string reference is in scope, any operation on the string reference will result in undefined behavior (that's bad).
+
+Additionally, once you create a string reference, you cannot modify it. It's value is constant. You can create a new string reference by using one more methods which create a new string reference. Since string references don't carry the actual string data with them, this is usually a very inexpensive operation.
+
+How about an example?
+---------------------
+Sure. One area where string references can be extremely useful is for passing immutable strings to functions.
+
+Let's say you need a function to trim leading and trailing spaces from a string and stream it to std::cout. Here's how you could implement it using string references:
+
+    #include <iostream>
+    #include <string>
+    #include "stref.h"
+
+    using namespace std;
+    using namespace tools; // string reference class is in tools namespace
+
+    void dump(stref sr) {
+        cout << '[' << sr.trim().left(4) << ']' << endl;
+    }
+    
+    int main(int, char**) {
+        dump("  test 1  ");
+        string s("   test 2   ");
+        dump(s);
+    }
+
+Running this will print:
+
+[test]
+[test]
+
+stref has implicit conversions from const char* and std::string so any function that accepts a stref will also accept a const char* or std::string. The same holds true for wstref and const wchar_t* / std::wstring.
+
+In the sample code, no string copying ever takes place (except when s is constructed).
+
+How did that actually work?
+---------------------------
+When constructing a stref from a string, the stref object retains two pieces of information about the string.
+    
+    1. A pointer to the string's contents. (ref)
+    2. The string's length. (len)
+        
+When dump("  test 1  ") is called, sr is initialized with:
+    ref: address of "  test 1  "
+    len: 10
+    
+When sr.trim() is called, it returns a temporary stref object with:
+    ref: address of "test 1  " (i.e. original string + 2)
+    len: 6
+    
+When .left(4) is called on that temporary, it returns another temporary object with:
+    ref: address of "test 1  : (same as previous temporary)
+    len: 4
+    
+stref includes an overload for: operator<< (ostream&)
+
+Even though a number of stref temporaries were generated, they are small and easily created/discarded on the stack.
+
+What else can it do?
+--------------------
+Look at the unit tests (stref.cpp) and the sample code (sample.cpp) to get an idea of its capabilities.
+
+How do I use it?
+----------------
+Drop stref.h into your project and #include it. There are no other dependencies.
+
+Which compilers are supported?
+------------------------------
+I have tested this with:
+
+    - Microsoft Visual C++ 10
+    - g++ 4.7
+    - clang++ 3.0
+
+Boost.Test is necessary to build the unit tests.
+
+The only C++11 feature necessary is std::function (#include <functional>).
+If you don't have a compiler which supports it, you can easily modify it to use Boost.Functional instead. Use boost::function instead of std::function and #include "boost/functional.hpp".
+
+License: MIT License
