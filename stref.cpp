@@ -25,155 +25,155 @@
 
 #include "stref.h"
 #include <vector>
-#define BOOST_TEST_MODULE	stref_tests
+#define BOOST_TEST_MODULE    stref_tests
 #include <boost/test/unit_test.hpp>
 
 using namespace std;
 using namespace tools;
 
 BOOST_AUTO_TEST_CASE(stref_ctor) {
-	const char* t = "abcd";
-	stref sr1(t);
-	BOOST_CHECK_EQUAL(sr1.data(), t);
-	BOOST_CHECK_EQUAL(sr1.length(), strlen(t));
+    const char* t = "abcd";
+    stref sr1(t);
+    BOOST_CHECK_EQUAL(sr1.data(), t);
+    BOOST_CHECK_EQUAL(sr1.length(), strlen(t));
 
-	stref sr2(sr1);
-	BOOST_CHECK_EQUAL(sr2.data(), sr1.data());
-	BOOST_CHECK_EQUAL(sr2.length(), sr1.length());
+    stref sr2(sr1);
+    BOOST_CHECK_EQUAL(sr2.data(), sr1.data());
+    BOOST_CHECK_EQUAL(sr2.length(), sr1.length());
 
-	std::string s("hello");
-	stref sr3(s);
-	BOOST_CHECK_EQUAL(sr3.data(), s.data());
-	BOOST_CHECK_EQUAL(sr3.length(), s.length());
+    std::string s("hello");
+    stref sr3(s);
+    BOOST_CHECK_EQUAL(sr3.data(), s.data());
+    BOOST_CHECK_EQUAL(sr3.length(), s.length());
 
-	std::wstring ws(L"HELLO");
-	wstref sr4(ws);
-	BOOST_CHECK_EQUAL(sr4.data(), ws.data());
-	BOOST_CHECK_EQUAL(sr4.length(), ws.length());
+    std::wstring ws(L"HELLO");
+    wstref sr4(ws);
+    BOOST_CHECK_EQUAL(sr4.data(), ws.data());
+    BOOST_CHECK_EQUAL(sr4.length(), ws.length());
     BOOST_CHECK(sr4.iequals(ws));
 
-	wstref sr5(ws.data(), ws.length());
-	BOOST_CHECK_EQUAL(sr5.data(), ws.data());
-	BOOST_CHECK_EQUAL(sr5.length(), ws.length());
+    wstref sr5(ws.data(), ws.length());
+    BOOST_CHECK_EQUAL(sr5.data(), ws.data());
+    BOOST_CHECK_EQUAL(sr5.length(), ws.length());
 }
 
 BOOST_AUTO_TEST_CASE(stref_assignment) {
-	stref sr1(""), sr2("xyzzy");
-	sr1 = sr2;
-	BOOST_CHECK_EQUAL(sr1.data(), sr2.data());
-	BOOST_CHECK_EQUAL(sr1.length(), sr2.length());
+    stref sr1(""), sr2("xyzzy");
+    sr1 = sr2;
+    BOOST_CHECK_EQUAL(sr1.data(), sr2.data());
+    BOOST_CHECK_EQUAL(sr1.length(), sr2.length());
 }
 
 BOOST_AUTO_TEST_CASE(stref_equality) {
-	stref sr1("hello");
-	stref sr2(sr1);
-	BOOST_CHECK(sr1 == sr2);
+    stref sr1("hello");
+    stref sr2(sr1);
+    BOOST_CHECK(sr1 == sr2);
 
-	stref sr3("hello");
-	stref sr4("hello world");
-	BOOST_CHECK(!(sr3 == sr4));
+    stref sr3("hello");
+    stref sr4("hello world");
+    BOOST_CHECK(!(sr3 == sr4));
 }
 
 BOOST_AUTO_TEST_CASE(stref_inequality) {
-	stref sr1("hello");
-	stref sr2(sr1);
-	BOOST_CHECK(!(sr1 != sr2));
+    stref sr1("hello");
+    stref sr2(sr1);
+    BOOST_CHECK(!(sr1 != sr2));
 
-	stref sr3("hello");
-	stref sr4("hello world");
-	BOOST_CHECK(sr3 != sr4);
+    stref sr3("hello");
+    stref sr4("hello world");
+    BOOST_CHECK(sr3 != sr4);
 }
 
 BOOST_AUTO_TEST_CASE(stref_substr) {
-	stref sr("sub-string test");
+    stref sr("sub-string test");
 
-	BOOST_CHECK_EQUAL(sr.substr(0, sr.length()), sr);
-	BOOST_CHECK_EQUAL(sr.substr(4, 6), stref("string"));
-	BOOST_CHECK_EQUAL(sr.substr(0, 3), stref("sub"));
-	BOOST_CHECK_EQUAL(sr.substr(11, 4), stref("test"));
-	BOOST_CHECK_EQUAL(sr.substr(11, 3), stref("tes"));
-	BOOST_CHECK_EQUAL(sr.substr(11, 5), stref("test"));
-	BOOST_CHECK_EQUAL(sr.substr(20, 0), stref(""));
-	BOOST_CHECK_EQUAL(sr.substr(20, 10), stref(""));
+    BOOST_CHECK_EQUAL(sr.substr(0, sr.length()), sr);
+    BOOST_CHECK_EQUAL(sr.substr(4, 6), stref("string"));
+    BOOST_CHECK_EQUAL(sr.substr(0, 3), stref("sub"));
+    BOOST_CHECK_EQUAL(sr.substr(11, 4), stref("test"));
+    BOOST_CHECK_EQUAL(sr.substr(11, 3), stref("tes"));
+    BOOST_CHECK_EQUAL(sr.substr(11, 5), stref("test"));
+    BOOST_CHECK_EQUAL(sr.substr(20, 0), stref(""));
+    BOOST_CHECK_EQUAL(sr.substr(20, 10), stref(""));
 
-	BOOST_CHECK_EQUAL(sr.substr(0), sr);
-	BOOST_CHECK_EQUAL(sr.substr(11), stref("test"));
+    BOOST_CHECK_EQUAL(sr.substr(0), sr);
+    BOOST_CHECK_EQUAL(sr.substr(11), stref("test"));
 }
 
 BOOST_AUTO_TEST_CASE(stref_iequals) {
-	BOOST_CHECK(stref("aaa").iequals(stref("aaa")));
-	BOOST_CHECK(stref("Aaa").iequals(stref("aaa")));
-	BOOST_CHECK(!stref("aaa").iequals(stref("aaaa")));
-	BOOST_CHECK(!stref("aaa").iequals(stref("aba")));
+    BOOST_CHECK(stref("aaa").iequals(stref("aaa")));
+    BOOST_CHECK(stref("Aaa").iequals(stref("aaa")));
+    BOOST_CHECK(!stref("aaa").iequals(stref("aaaa")));
+    BOOST_CHECK(!stref("aaa").iequals(stref("aba")));
 }
 
 BOOST_AUTO_TEST_CASE(stref_iless_than) {
-	BOOST_CHECK(stref("aaa").iless_than(stref("aab")));
-	BOOST_CHECK(stref("aaa").iless_than(stref("aaaa")));
-	BOOST_CHECK(stref("aaa").iless_than(stref("Aba")));
+    BOOST_CHECK(stref("aaa").iless_than(stref("aab")));
+    BOOST_CHECK(stref("aaa").iless_than(stref("aaaa")));
+    BOOST_CHECK(stref("aaa").iless_than(stref("Aba")));
 
-	BOOST_CHECK(!stref("aaa").iless_than(stref("aaa")));
-	BOOST_CHECK(!stref("aab").iless_than(stref("aaa")));
-	BOOST_CHECK(!stref("aaaa").iless_than(stref("aaa")));
-	BOOST_CHECK(!stref("Aba").iless_than(stref("aaa")));
+    BOOST_CHECK(!stref("aaa").iless_than(stref("aaa")));
+    BOOST_CHECK(!stref("aab").iless_than(stref("aaa")));
+    BOOST_CHECK(!stref("aaaa").iless_than(stref("aaa")));
+    BOOST_CHECK(!stref("Aba").iless_than(stref("aaa")));
 }
 
 BOOST_AUTO_TEST_CASE(stref_icompare) {
-	BOOST_CHECK(stref("aaa").icompare(stref("aaa")) == 0);
-	BOOST_CHECK(stref("aaa").icompare(stref("aaaa")) < 0);
-	BOOST_CHECK(stref("aaaa").icompare(stref("aaa")) > 0);
-	BOOST_CHECK(stref("aAa").icompare(stref("aaa")) == 0);
-	BOOST_CHECK(stref("aaa").icompare(stref("aAAa")) < 0);
-	BOOST_CHECK(stref("aaaa").icompare(stref("aAa")) > 0);
-	BOOST_CHECK(stref("aaa").icompare(stref("AAB")) < 0);
+    BOOST_CHECK(stref("aaa").icompare(stref("aaa")) == 0);
+    BOOST_CHECK(stref("aaa").icompare(stref("aaaa")) < 0);
+    BOOST_CHECK(stref("aaaa").icompare(stref("aaa")) > 0);
+    BOOST_CHECK(stref("aAa").icompare(stref("aaa")) == 0);
+    BOOST_CHECK(stref("aaa").icompare(stref("aAAa")) < 0);
+    BOOST_CHECK(stref("aaaa").icompare(stref("aAa")) > 0);
+    BOOST_CHECK(stref("aaa").icompare(stref("AAB")) < 0);
 }
 
 BOOST_AUTO_TEST_CASE(stref_has_any_of) {
-	BOOST_CHECK(stref("abcd").has_any_of("-cf"));
-	BOOST_CHECK(!stref("abcd").has_any_of("!wxzy"));
+    BOOST_CHECK(stref("abcd").has_any_of("-cf"));
+    BOOST_CHECK(!stref("abcd").has_any_of("!wxzy"));
 }
 
 BOOST_AUTO_TEST_CASE(stref_istarts_with) {
-	BOOST_CHECK(stref("").istarts_with(stref("")));
-	BOOST_CHECK(stref("hello").istarts_with(stref("")));
-	BOOST_CHECK(stref("hello").istarts_with(stref("h")));
-	BOOST_CHECK(stref("hello").istarts_with(stref("he")));
-	BOOST_CHECK(stref("hello").istarts_with(stref("hel")));
-	BOOST_CHECK(stref("hello").istarts_with(stref("hell")));
-	BOOST_CHECK(stref("hello").istarts_with(stref("hello")));
-	BOOST_CHECK(stref("hello").istarts_with(stref("H")));
-	BOOST_CHECK(stref("hello").istarts_with(stref("HE")));
-	BOOST_CHECK(stref("hello").istarts_with(stref("HEL")));
-	BOOST_CHECK(stref("hello").istarts_with(stref("HELL")));
-	BOOST_CHECK(stref("hello").istarts_with(stref("HELLO")));
+    BOOST_CHECK(stref("").istarts_with(stref("")));
+    BOOST_CHECK(stref("hello").istarts_with(stref("")));
+    BOOST_CHECK(stref("hello").istarts_with(stref("h")));
+    BOOST_CHECK(stref("hello").istarts_with(stref("he")));
+    BOOST_CHECK(stref("hello").istarts_with(stref("hel")));
+    BOOST_CHECK(stref("hello").istarts_with(stref("hell")));
+    BOOST_CHECK(stref("hello").istarts_with(stref("hello")));
+    BOOST_CHECK(stref("hello").istarts_with(stref("H")));
+    BOOST_CHECK(stref("hello").istarts_with(stref("HE")));
+    BOOST_CHECK(stref("hello").istarts_with(stref("HEL")));
+    BOOST_CHECK(stref("hello").istarts_with(stref("HELL")));
+    BOOST_CHECK(stref("hello").istarts_with(stref("HELLO")));
 
-	BOOST_CHECK(stref("hello, world").istarts_with(stref("hello")));
+    BOOST_CHECK(stref("hello, world").istarts_with(stref("hello")));
 
-	BOOST_CHECK(!stref("").istarts_with(stref("hello")));
-	BOOST_CHECK(!stref("hello").istarts_with(stref("fred")));
-	BOOST_CHECK(!stref("hello").istarts_with(stref("helo")));
-	BOOST_CHECK(!stref("hello").istarts_with(stref("hElo")));
-	BOOST_CHECK(!stref("hello").istarts_with(stref("hello, world")));
+    BOOST_CHECK(!stref("").istarts_with(stref("hello")));
+    BOOST_CHECK(!stref("hello").istarts_with(stref("fred")));
+    BOOST_CHECK(!stref("hello").istarts_with(stref("helo")));
+    BOOST_CHECK(!stref("hello").istarts_with(stref("hElo")));
+    BOOST_CHECK(!stref("hello").istarts_with(stref("hello, world")));
 }
 
 BOOST_AUTO_TEST_CASE(stref_iends_with) {
-	BOOST_CHECK(stref("").iends_with(stref("")));
-	BOOST_CHECK(stref("HELLO").iends_with(stref("")));
-	BOOST_CHECK(stref("HELLO").iends_with(stref("O")));
-	BOOST_CHECK(stref("HELLO").iends_with(stref("LO")));
-	BOOST_CHECK(stref("HELLO").iends_with(stref("LLO")));
-	BOOST_CHECK(stref("HELLO").iends_with(stref("ELLO")));
-	BOOST_CHECK(stref("HELLO").iends_with(stref("HELLO")));
-	BOOST_CHECK(stref("HELLO").iends_with(stref("o")));
-	BOOST_CHECK(stref("HELLO").iends_with(stref("Lo")));
-	BOOST_CHECK(stref("HELLO").iends_with(stref("LlO")));
+    BOOST_CHECK(stref("").iends_with(stref("")));
+    BOOST_CHECK(stref("HELLO").iends_with(stref("")));
+    BOOST_CHECK(stref("HELLO").iends_with(stref("O")));
+    BOOST_CHECK(stref("HELLO").iends_with(stref("LO")));
+    BOOST_CHECK(stref("HELLO").iends_with(stref("LLO")));
+    BOOST_CHECK(stref("HELLO").iends_with(stref("ELLO")));
+    BOOST_CHECK(stref("HELLO").iends_with(stref("HELLO")));
+    BOOST_CHECK(stref("HELLO").iends_with(stref("o")));
+    BOOST_CHECK(stref("HELLO").iends_with(stref("Lo")));
+    BOOST_CHECK(stref("HELLO").iends_with(stref("LlO")));
 
-	BOOST_CHECK(stref("hello, world").iends_with(stref("world")));
+    BOOST_CHECK(stref("hello, world").iends_with(stref("world")));
 
-	BOOST_CHECK(!stref("").iends_with(stref("hello")));
-	BOOST_CHECK(!stref("hello").iends_with(stref("fred")));
-	BOOST_CHECK(!stref("hello").iends_with(stref("othello")));
-	BOOST_CHECK(!stref("hello").iends_with(stref("LOL")));
+    BOOST_CHECK(!stref("").iends_with(stref("hello")));
+    BOOST_CHECK(!stref("hello").iends_with(stref("fred")));
+    BOOST_CHECK(!stref("hello").iends_with(stref("othello")));
+    BOOST_CHECK(!stref("hello").iends_with(stref("LOL")));
 }
 
 BOOST_AUTO_TEST_CASE(stref_lt) {

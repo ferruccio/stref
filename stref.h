@@ -85,25 +85,25 @@ namespace tools {
 
     // basic string reference
     template <typename TT>
-	class basic_stref
-	{
-	private:
+    class basic_stref
+    {
+    private:
         typedef basic_stref<TT> bstref;
         typedef typename TT::char_type chT;
 
-	public:
-		basic_stref<TT>(const bstref& sr) : ref(sr.ref), len(sr.len) {}
-		basic_stref<TT>(const chT* str) : ref(str), len(0) { while (str[len] != 0) ++len; }
-		basic_stref<TT>(const chT* str, size_t len) : ref(str), len(len) {}
-		basic_stref<TT>(const std::basic_string<chT>& str) : ref(str.data()), len(str.length()) {}
+    public:
+        basic_stref<TT>(const bstref& sr) : ref(sr.ref), len(sr.len) {}
+        basic_stref<TT>(const chT* str) : ref(str), len(0) { while (str[len] != 0) ++len; }
+        basic_stref<TT>(const chT* str, size_t len) : ref(str), len(len) {}
+        basic_stref<TT>(const std::basic_string<chT>& str) : ref(str.data()), len(str.length()) {}
 
-		bstref& operator= (const bstref& sr) {
-			ref = sr.ref;
-			len = sr.len;
-			return *this;
-		}
+        bstref& operator= (const bstref& sr) {
+            ref = sr.ref;
+            len = sr.len;
+            return *this;
+        }
 
-		chT operator[] (int index) const { return _at(index); }
+        chT operator[] (int index) const { return _at(index); }
 
         chT at(int index) {
             if (index < 0 || index >= length())
@@ -128,24 +128,24 @@ namespace tools {
         //
 
         int compare(const bstref& rhs) const {
-			size_t len = std::min(length(), rhs.length());
-			for (size_t i = 0; i < len; ++i)
+            size_t len = std::min(length(), rhs.length());
+            for (size_t i = 0; i < len; ++i)
                 if (_at(i) != rhs._at(i))
                     return _at(i) - rhs._at(i);
-			return length() == rhs.length() ? 0 : length() - rhs.length();
-		}
+            return length() == rhs.length() ? 0 : length() - rhs.length();
+        }
 
-		bool operator== (const bstref& rhs) const {
-			if (len != rhs.len) return false;	// different lengths, cannot be equal
-			if (ref == rhs.ref) return true;	// same object (+same length), must be equal
+        bool operator== (const bstref& rhs) const {
+            if (len != rhs.len) return false;    // different lengths, cannot be equal
+            if (ref == rhs.ref) return true;    // same object (+same length), must be equal
             return compare(rhs) == 0;
-		}
+        }
 
-		bool operator!= (const bstref& rhs) const {
-			if (len != rhs.len) return true;	// different lengths, must be unequal
-			if (ref == rhs.ref) return false;	// same object (+same length), cannot be unequal
+        bool operator!= (const bstref& rhs) const {
+            if (len != rhs.len) return true;    // different lengths, must be unequal
+            if (ref == rhs.ref) return false;    // same object (+same length), cannot be unequal
             return compare(rhs) != 0;
-		}
+        }
 
         bool operator< (const bstref& rhs) const {
             if (ref == rhs.ref && len < rhs.len) return true;   // same string, shorter
@@ -171,26 +171,26 @@ namespace tools {
         // case-insensitive relational operators
         //
 
-		int icompare(const bstref& rhs) const {
-			size_t len = std::min(length(), rhs.length());
-			for (size_t i = 0; i < len; ++i) {
-				chT c1 = to_lower_case(_at(i)), c2 = to_lower_case(rhs._at(i));
-				if (c1 != c2) return c1 - c2;			
-			}
-			return length() == rhs.length() ? 0 : length() - rhs.length();
-		}
+        int icompare(const bstref& rhs) const {
+            size_t len = std::min(length(), rhs.length());
+            for (size_t i = 0; i < len; ++i) {
+                chT c1 = to_lower_case(_at(i)), c2 = to_lower_case(rhs._at(i));
+                if (c1 != c2) return c1 - c2;            
+            }
+            return length() == rhs.length() ? 0 : length() - rhs.length();
+        }
 
-		bool iequals(const bstref& rhs) const {
-			if (len != rhs.len) return false;	// different lengths, cannot be equal
-			if (ref == rhs.ref) return true;	// same object (+same length), must be equal
+        bool iequals(const bstref& rhs) const {
+            if (len != rhs.len) return false;    // different lengths, cannot be equal
+            if (ref == rhs.ref) return true;    // same object (+same length), must be equal
             return icompare(rhs) == 0;
-		}
+        }
 
         bool inot_equals(const bstref& rhs) const {
-			if (len != rhs.len) return true;	// different lengths, must be unequal
-			if (ref == rhs.ref) return false;	// same object (+same length), cannot be unequal
+            if (len != rhs.len) return true;    // different lengths, must be unequal
+            if (ref == rhs.ref) return false;    // same object (+same length), cannot be unequal
             return icompare(rhs) != 0;
-		}
+        }
 
         bool iless_than(const bstref& rhs) {
             if (ref == rhs.ref && len < rhs.len) return true;   // same string, shorter
@@ -217,28 +217,28 @@ namespace tools {
         //
 
         bool starts_with(const bstref& rhs) const {
-			if (rhs.length() == 0) return true;			// everything starts with an empty string
-			if (length() < rhs.length()) return false;	// "starts with" string is longer than tested string
-			return left(rhs.length()) == rhs;
-		}
+            if (rhs.length() == 0) return true;            // everything starts with an empty string
+            if (length() < rhs.length()) return false;    // "starts with" string is longer than tested string
+            return left(rhs.length()) == rhs;
+        }
 
-		bool istarts_with(const bstref& rhs) const {
-			if (rhs.length() == 0) return true;			// everything starts with an empty string
-			if (length() < rhs.length()) return false;	// "starts with" string is longer than tested string
-			return left(rhs.length()).icompare(rhs) == 0;
-		}
+        bool istarts_with(const bstref& rhs) const {
+            if (rhs.length() == 0) return true;            // everything starts with an empty string
+            if (length() < rhs.length()) return false;    // "starts with" string is longer than tested string
+            return left(rhs.length()).icompare(rhs) == 0;
+        }
 
-		bool ends_with(const bstref& rhs) const {
-			if (rhs.length() == 0) return true;			// everything ends with an empty string
-			if (length() < rhs.length()) return false;	// "ends with" string is longer than tested string
-			return right(rhs.length()) == rhs;
-		}
+        bool ends_with(const bstref& rhs) const {
+            if (rhs.length() == 0) return true;            // everything ends with an empty string
+            if (length() < rhs.length()) return false;    // "ends with" string is longer than tested string
+            return right(rhs.length()) == rhs;
+        }
 
         bool iends_with(const bstref& rhs) const {
-			if (rhs.length() == 0) return true;			// everything ends with an empty string
-			if (length() < rhs.length()) return false;	// "ends with" string is longer than tested string
-			return right(rhs.length()).icompare(rhs) == 0;
-		}
+            if (rhs.length() == 0) return true;            // everything ends with an empty string
+            if (length() < rhs.length()) return false;    // "ends with" string is longer than tested string
+            return right(rhs.length()).icompare(rhs) == 0;
+        }
 
         bool has(const chT ch) const {
             for (size_t i = 0; i < len; ++i)
@@ -247,29 +247,29 @@ namespace tools {
             return false;
         }
 
-		bool has_any_of(bstref charset) const {
+        bool has_any_of(bstref charset) const {
             const chT* end = charset.data() + charset.length();
-			for (size_t i = 0; i < len; ++i)
+            for (size_t i = 0; i < len; ++i)
                 if (std::find(charset.data(), end, _at(i)) != end)
-					return true;
-			return false;
-		}
+                    return true;
+            return false;
+        }
 
         //
         // string algorithms
         //
 
-		bstref substr(size_t offset, size_t len) const {
+        bstref substr(size_t offset, size_t len) const {
             return offset >= length()
                 ? bstref(ref, 0)
                 : bstref(ref + offset, std::min(len, this->len - offset));
-		}
+        }
 
-		bstref substr(size_t offset) const {
+        bstref substr(size_t offset) const {
             return offset >= len
                 ? bstref(ref, 0)
                 : bstref(ref + offset, len - offset);
-		}
+        }
 
         bstref left(size_t len) const {
             return substr(0, len);
@@ -352,13 +352,13 @@ namespace tools {
         }
 
         // implicit cast to std::basic_string<chT>
-		operator std::basic_string<chT>() const { return std::basic_string<chT>(data(), length()); }
+        operator std::basic_string<chT>() const { return std::basic_string<chT>(data(), length()); }
 
         // readonly access to internal members
-		const chT* data() const { return ref; }
-		size_t length() const { return len; }
+        const chT* data() const { return ref; }
+        size_t length() const { return len; }
 
-	private:
+    private:
         // unchecked access to individual characters
         chT _at(int index) const { return ref[index]; }
         chT _front() const { return ref[0]; }
@@ -374,27 +374,27 @@ namespace tools {
             chT ch;
         };
 
-		const chT*	ref;	// original string data
-		size_t		len;	// string length
-	};
+        const chT*    ref;    // original string data
+        size_t        len;    // string length
+    };
 
     // typedefs for string and wide-string references
-	typedef basic_stref<char_traits> stref;
-	typedef basic_stref<wchar_traits> wstref;
+    typedef basic_stref<char_traits> stref;
+    typedef basic_stref<wchar_traits> wstref;
 
     // write narrow stref to narrow stream
-	inline std::ostream& operator<<(std::ostream& os, const stref& s) {
-		for (size_t i = 0; i < s.length(); ++i)
-			os << s[i];
-		return os;
-	}
+    inline std::ostream& operator<<(std::ostream& os, const stref& s) {
+        for (size_t i = 0; i < s.length(); ++i)
+            os << s[i];
+        return os;
+    }
 
     // write wide stref to wide stream
-	inline std::wostream& operator<<(std::wostream& os, const wstref& s) {
-		for (size_t i = 0; i < s.length(); ++i)
-			os << s[i];
-		return os;
-	}
+    inline std::wostream& operator<<(std::wostream& os, const wstref& s) {
+        for (size_t i = 0; i < s.length(); ++i)
+            os << s[i];
+        return os;
+    }
 
 }
 

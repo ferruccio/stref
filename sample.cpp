@@ -18,7 +18,7 @@ int main(int, char**) {
     process_string("a,  sample; delimited , string   ");
 
     cout << "\n--- test 2 ---" << endl;
-	string ds(" another;delimited;string "); // string copy, std::string constructor
+    string ds(" another;delimited;string "); // string copy, std::string constructor
     process_string(ds);
 
     cout << "\n--- test 3 ---" << endl;
@@ -30,6 +30,6 @@ int main(int, char**) {
     a.split(':', [&](stref sr) { sv.push_back(sr.trim().left(3)); }); // string copy, std::string constructor
     for (auto s = begin(sv); s != end(sv); ++s)
         cout << '[' << *s << ']' << endl;
-		
-	return 0;
+        
+    return 0;
 }
