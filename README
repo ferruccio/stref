@@ -14,7 +14,7 @@ What's the catch?
 -----------------
 A string reference is only valid while the string content that it refers to is valid. If the content is no longer valid (out of scope or deallocated) while the string reference is in scope, any operation on the string reference will result in undefined behavior (that's bad).
 
-Additionally, once you create a string reference, you cannot modify it. It's value is constant. You can create a new string reference by using one more methods which create a new string reference. Since string references don't carry the actual string data with them, this is usually a very inexpensive operation.
+Additionally, once you create a string reference, you cannot modify it. It's value is constant. You can create a new string reference by using one more member functions which create a new string reference. Since string references don't carry the actual string data with them, this is usually a very inexpensive operation.
 
 A string reference class can be really good at certain string operations (iteration, tokenization). But, because it is not allowed to modify the underlying string, certain operations are impossible (transformation, insertion, deletion). In those cases, you need to use a real string class.
 
@@ -73,7 +73,7 @@ When .left(4) is called on that temporary, it returns another temporary object w
     
 stref includes an overload for: operator<< (ostream&)
 
-Even though a number of stref temporaries were generated, they are small and easily created/discarded on the stack.
+Even though a number of stref temporaries were generated, they are small and efficiently created/discarded on the stack.
 
 Couldn't you have written that using std::strings and Boost?
 ------------------------------------------------------------
@@ -108,9 +108,9 @@ and maybe add an overload for std::string so you don't have embarrassing c_str()
         dump(str.c_str());
     }
 
-How about a better example? How about tokenizing a string?
-----------------------------------------------------------
-I thought you'd never ask! Given a comma-delimited string, print each component of that string and indicate whether or not its numeric.
+Do you have a better example? How about tokenizing a string?
+------------------------------------------------------------
+I thought you'd never ask! Given a comma-delimited string, print each component of that string and indicate whether or not it's numeric.
 
     #include <iostream>
     #include <cctype>
@@ -151,7 +151,7 @@ Which compilers are supported?
 I have tested this with:
 
     - Microsoft Visual C++ 10
-    - g++ 4.7
+    - GNU g++ 4.7
     - clang++ 3.0
 
 The only C++11 feature necessary is std::function (#include <functional>).
