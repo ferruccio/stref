@@ -8,13 +8,15 @@ A string reference class looks and works like most string classes except that it
 
 Why is this useful?
 -------------------
-Since it has no storage of its own to maintain, a string reference class can be extremely space and time efficient.
+Since it has no storage of its own to maintain, a string reference class allows you to write string algorithms which are extremely space and time efficient.
 
 What's the catch?
 -----------------
 A string reference is only valid while the string content that it refers to is valid. If the content is no longer valid (out of scope or deallocated) while the string reference is in scope, any operation on the string reference will result in undefined behavior (that's bad).
 
 Additionally, once you create a string reference, you cannot modify it. It's value is constant. You can create a new string reference by using one more methods which create a new string reference. Since string references don't carry the actual string data with them, this is usually a very inexpensive operation.
+
+A string reference class can be really good at certain string operations (iteration, tokenization). But, because it is not allowed to modify the underlying string, certain operations are impossible (transformation, insertion, deletion). In those cases, you need to use a real string class.
 
 How about an example?
 ---------------------
@@ -70,6 +72,27 @@ When .left(4) is called on that temporary, it returns another temporary object w
 stref includes an overload for: operator<< (ostream&)
 
 Even though a number of stref temporaries were generated, they are small and easily created/discarded on the stack.
+
+Couldn't you have written that using std::strings and Boost?
+------------------------------------------------------------
+Of course:
+
+    void dump(const std::string& str) {
+        cout << '[' << boost::trim_copy(str).substr(0, 4) << ']' << endl;
+    }
+
+Not bad. It only cost two string copies (more if your compiler doesn't support RVO or rvalue references). If you pass a const char*, that'll add one more string copy. Alternatively, you can can avoid any string copying by implementing it entirely with pointers:
+
+    void dump(const char* str) {
+        // hard to understand/maintain pointer
+        // fiddling code that I'd rather not write
+    }
+
+and maybe add an overload for std::string so you don't have embarrassing c_str() calls all over your code:
+
+    void dump(const std::string& str) {
+        dump(str.c_str());
+    }
 
 What else can it do?
 --------------------
