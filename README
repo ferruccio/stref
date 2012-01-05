@@ -86,8 +86,20 @@ Of course:
 Not bad. It only cost one string copy (more if your compiler doesn't support RVO or rvalue references). If you pass a const char*, that'll add one more string copy. Alternatively, you can can avoid any string copying by implementing it entirely with pointers:
 
     void dump(const char* str) {
-        // hard to understand/maintain pointer
-        // fiddling code that I'd rather not write
+        // trim the left
+        while (*str && ::isspace(*str))
+            ++str;
+        size_t len = ::strlen(str);
+        // trim the right
+        while (len > 0 && ::isspace(str[len - 1]))
+            --len;
+        // limit result to 4 chars
+        len = std::max(len, 4);
+        // print result
+        cout << '[';
+        for (size_t i = 0; i < len; ++i)
+            cout << str[i];
+        cout << ']' << endl;
     }
 
 and maybe add an overload for std::string so you don't have embarrassing c_str() calls all over your code:
