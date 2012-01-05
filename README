@@ -83,7 +83,7 @@ Of course:
         cout << '[' << boost::trim_copy(str).substr(0, 4) << ']' << endl;
     }
 
-Not bad. It only cost one string copy (more if your compiler doesn't support RVO or rvalue references). If you pass a const char*, that'll add one more string copy. Alternatively, you can can avoid any string copying by implementing it entirely with pointers:
+Not bad. It only cost one string copy (more if your compiler doesn't support RVO or rvalue references). If you pass in a const char*, that'll add one more string copy. Alternatively, you can can avoid any string copying by implementing it entirely with pointers:
 
     void dump(const char* str) {
         // trim the left
@@ -106,6 +106,34 @@ and maybe add an overload for std::string so you don't have embarrassing c_str()
 
     void dump(const std::string& str) {
         dump(str.c_str());
+    }
+
+How about a better example? How about tokenizing a string?
+----------------------------------------------------------
+I thought you'd never ask! Given a comma-delimited string, print each component of that string and indicate whether or not its numeric.
+
+    #include <iostream>
+    #include <cctype>
+    #include "stref.h"
+
+    using namespace std;
+    using namespace tools;
+
+    bool isnum(stref sr) {
+        bool num = true;
+        sr.trim().each([&](char ch) {
+            if (!isdigit(ch))
+                num = false;
+        }
+        return num;
+    }
+
+    int main(int, char**) {
+        string csv("abc, 123, do-re-mi");
+        stref(csv).split(',', [](stref sr) {
+            cout << sr << (isnum(sr) ? " is" : " is not") << " numeric" << endl;
+        }
+        return 0;
     }
 
 What else can it do?
