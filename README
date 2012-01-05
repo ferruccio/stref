@@ -22,7 +22,7 @@ How about an example?
 ---------------------
 Sure. One area where string references can be extremely useful is for passing immutable strings to functions.
 
-Let's say you need a function to trim leading and trailing spaces from a string and stream it to std::cout. Here's how you could implement it using string references:
+Let's say you need a function to trim leading and trailing spaces from a string and stream at most four of it's first character to std::cout. Here's how you could implement it using string references:
 
     #include <iostream>
     #include <string>
@@ -37,13 +37,15 @@ Let's say you need a function to trim leading and trailing spaces from a string 
     
     int main(int, char**) {
         dump("  test 1  ");
-        string s("   test 2   ");
+        dump(" t 2 ");
+        string s("   test 3   ");
         dump(s);
     }
 
 Running this will print:
 
 [test]
+[t 2]
 [test]
 
 stref has implicit conversions from const char* and std::string so any function that accepts a stref will also accept a const char* or std::string. The same holds true for wstref and const wchar_t* / std::wstring.
@@ -81,7 +83,7 @@ Of course:
         cout << '[' << boost::trim_copy(str).substr(0, 4) << ']' << endl;
     }
 
-Not bad. It only cost two string copies (more if your compiler doesn't support RVO or rvalue references). If you pass a const char*, that'll add one more string copy. Alternatively, you can can avoid any string copying by implementing it entirely with pointers:
+Not bad. It only cost one string copy (more if your compiler doesn't support RVO or rvalue references). If you pass a const char*, that'll add one more string copy. Alternatively, you can can avoid any string copying by implementing it entirely with pointers:
 
     void dump(const char* str) {
         // hard to understand/maintain pointer
