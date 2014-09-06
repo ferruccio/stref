@@ -1,1 +1,8 @@
 stref
+Debug
+Release
+x64
+Win32
+*.sdf
+*.suo
+*.user
